@@ -1,0 +1,51 @@
+version: "3.4"
+
+networks:
+  internal-network:
+    # driver: bridge
+#By default docker use bridge network
+
+services:
+  core-api-service:
+    image: "docker-demo-dotnetcore:$BUILD_TAG"
+    container_name: core.api.prod.container
+    build:
+      context: ./project-app/Blog
+      dockerfile: ./production.dockerfile
+    ports:
+      - 5010:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    depends_on:
+      - sql-server-db-service
+    networks:
+      - internal-network
+
+  ng-app-service:
+    image: "docker-demo-angular:$BUILD_TAG"
+    container_name: ng.app.prod.container
+    build:
+      context: ./project-app/ClientApp
+      dockerfile: ./production.dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8000:80
+    command: [nginx, "-g", "daemon off;"]
+    depends_on:
+      - core-api-service
+  
+  sql-server-db-service:
+    image: microsoft/mssql-server-linux:2017-latest
+    container_name: sql.server.db.prod.container
+    hostname: 'sqlserver' 
+    environment:  
+      ACCEPT_EULA: Y  
+      SA_PASSWORD: "BigPassw0rd"   
+    ports:  
+      - '1433:1433'
+    volumes:  
+      - ./data/mssql:/var/opt/mssql
+    networks:
+      - internal-network
+
