@@ -10,25 +10,25 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh ' ./jenkins/build/build.sh '
+                sh ''' ./jenkins/build/build.sh '''
             }
         }
 
         stage('Test') {
             steps {
-                sh ' ./jenkins/test/test.sh '
+                sh ''' ./jenkins/test/test.sh '''
             }
         }
 
         stage('Push') {
             steps {
-                sh ' ./jenkins/push/push.sh '
+                sh ''' ./jenkins/push/push.sh '''
             }
         }
 
         stage('Deploy') {
             steps {
-                sh ' ./jenkins/deploy/deploy.sh '
+                sh ''' ./jenkins/deploy/deploy.sh '''
             }
         }
     }
